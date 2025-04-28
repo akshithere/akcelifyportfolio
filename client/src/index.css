@@ -1,0 +1,601 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 20 14.3% 4.1%;
+  --muted: 60 4.8% 95.9%;
+  --muted-foreground: 25 5.3% 44.7%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 20 14.3% 4.1%;
+  --card: 0 0% 100%;
+  --card-foreground: 20 14.3% 4.1%;
+  --border: 20 5.9% 90%;
+  --input: 20 5.9% 90%;
+  --primary: 207 90% 54%;
+  --primary-foreground: 211 100% 99%;
+  --secondary: 60 4.8% 95.9%;
+  --secondary-foreground: 24 9.8% 10%;
+  --accent: 60 4.8% 95.9%;
+  --accent-foreground: 24 9.8% 10%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 60 9.1% 97.8%;
+  --ring: 20 14.3% 4.1%;
+  --radius: 0.5rem;
+
+  /* Custom retro colors */
+  --arcade-green: 120 100% 50%;
+  --retro-magenta: 315 100% 65%;
+  --crt-cyan: 180 100% 50%;
+  --dark-screen: 0 0% 0%;
+  --light-gray: 0 0% 96%;
+  --coin-yellow: 48 100% 50%;
+
+  /* Chart colors */
+  --chart-1: var(--arcade-green);
+  --chart-2: var(--retro-magenta);
+  --chart-3: var(--crt-cyan);
+  --chart-4: var(--coin-yellow);
+  --chart-5: 340 100% 64%;
+}
+
+.dark {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --primary: 207 90% 54%;
+  --primary-foreground: 211 100% 99%;
+  --secondary: 240 3.7% 15.9%;
+  --secondary-foreground: 0 0% 98%;
+  --accent: 240 3.7% 15.9%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --ring: 240 4.9% 83.9%;
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+    cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' style='fill:none;stroke:%2300ff00;stroke-width:2'><rect width='8' height='8' x='0' y='0' /></svg>") 0 0, auto;
+    --radius: 0 !important; /* Force all corners to be sharp */
+  }
+
+  a, button, [role="button"] {
+    cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' style='fill:%2300ff00;stroke:%2300ff00;stroke-width:1'><rect width='8' height='8' x='0' y='0' /></svg>") 0 0, pointer;
+  }
+
+  body {
+    @apply font-sans antialiased bg-dark-screen text-arcade-green;
+    position: relative;
+    overflow-x: hidden;
+  }
+  
+  /* Override shadcn's rounded corners */
+  .rounded-md, .rounded-lg, .rounded-xl, .rounded, .rounded-sm, .rounded-full {
+    border-radius: 0 !important;
+  }
+  
+  /* Add a subtle CRT flicker effect to the entire page */
+  body::after {
+    content: "";
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.2) 100%);
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.2;
+    animation: flicker 0.15s infinite alternate;
+  }
+  
+  @keyframes flicker {
+    0% { opacity: 0.1; }
+    100% { opacity: 0.2; }
+  }
+}
+
+@layer components {
+  /* Retro/Arcade styling components */
+  .scanlines::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.15),
+      rgba(0, 0, 0, 0.15) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+    pointer-events: none;
+    z-index: 50;
+    opacity: 0.3;
+  }
+  
+  .pixelated {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
+  
+  .pixel-border {
+    box-shadow: 
+      0 0 0 2px #000000,
+      0 0 0 4px #00ff00;
+    border-radius: 0 !important;
+  }
+
+  .blink {
+    animation: blink 1s step-end infinite;
+  }
+  
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+
+  .flicker-text {
+    animation: textFlicker 0.2s infinite alternate;
+  }
+  
+  @keyframes textFlicker {
+    0% { opacity: 0.8; }
+    100% { opacity: 1; }
+  }
+
+  .glitch {
+    position: relative;
+    animation: glitch-skew 1s linear infinite alternate-reverse;
+  }
+  
+  .glitch::before,
+  .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.8;
+  }
+  
+  .glitch::before {
+    color: #ff55dd;
+    animation: glitch-anim 5s infinite linear alternate-reverse;
+    clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+    transform: translate(-2px, -2px);
+  }
+  
+  .glitch::after {
+    color: #00ffff;
+    animation: glitch-anim2 2s infinite linear alternate-reverse;
+    clip-path: polygon(0 60%, 100% 60%, 100% 100%, 0 100%);
+    transform: translate(2px, 2px);
+  }
+  
+  @keyframes glitch-anim {
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(-2px, -2px); }
+    60% { transform: translate(2px, 2px); }
+    80% { transform: translate(2px, -2px); }
+    100% { transform: translate(0); }
+  }
+  
+  @keyframes glitch-anim2 {
+    0% { transform: translate(0); }
+    20% { transform: translate(3px, -3px); }
+    40% { transform: translate(3px, 3px); }
+    60% { transform: translate(-3px, -3px); }
+    80% { transform: translate(-3px, 3px); }
+    100% { transform: translate(0); }
+  }
+  
+  @keyframes glitch-skew {
+    0% { transform: skew(0deg); }
+    10% { transform: skew(0deg); }
+    15% { transform: skew(0.5deg); }
+    20% { transform: skew(0deg); }
+    70% { transform: skew(0deg); }
+    75% { transform: skew(-0.5deg); }
+    80% { transform: skew(0deg); }
+    100% { transform: skew(0deg); }
+  }
+
+  .pixel-button {
+    position: relative;
+    transition: all 0.1s;
+    background-color: #000000;
+    color: #00ff00;
+    border: 2px solid #00ff00;
+    padding: 0.5rem 1rem;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    box-shadow: 4px 4px 0 #00aa00;
+    transform: translate(-2px, -2px);
+    border-radius: 0 !important;
+  }
+  
+  .pixel-button:hover {
+    transform: translate(0, 0);
+    box-shadow: 2px 2px 0 #00aa00;
+    background-color: #001100;
+  }
+  
+  .pixel-button:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0px 0px 0 #00aa00;
+    background-color: #000a00;
+  }
+
+  .terminal-container {
+    background-color: #000000;
+    color: #00ff00;
+    font-family: 'VT323', monospace;
+    border: 2px solid #00ff00;
+    padding: 1rem;
+    border-radius: 0 !important;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .terminal-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      transparent 50%,
+      rgba(0, 255, 0, 0.02) 50%
+    );
+    background-size: 100% 4px;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .terminal-prefix::before {
+    content: '> ';
+    color: #00ff00;
+  }
+
+  .blog-card {
+    transition: all 0.2s;
+    border: 2px solid #00ff00;
+    background: #000000;
+    border-radius: 0 !important;
+  }
+
+  .blog-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 #00ff00;
+  }
+  
+  /* Pixel art styling */
+  .pixel-art-container {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    transform: scale(1);
+    position: relative;
+  }
+  
+  /* CRT effect for images */
+  .crt-effect {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .crt-effect::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      rgba(18, 16, 16, 0) 50%,
+      rgba(0, 0, 0, 0.25) 50%
+    );
+    background-size: 100% 4px;
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0.6;
+  }
+  
+  /* 3D Transform Utilities */
+  .perspective-800 {
+    perspective: 800px;
+  }
+  
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+  
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+  
+  .rotate-y-5 {
+    transform: rotateY(5deg);
+  }
+  
+  /* Animated Glitch Effect */
+  .animate-glitch-h {
+    animation: glitch-horizontal 0.3s ease infinite;
+  }
+  
+  @keyframes glitch-horizontal {
+    0% { transform: translateX(-2px); }
+    25% { transform: translateX(0); }
+    50% { transform: translateX(2px); }
+    75% { transform: translateX(0); }
+    100% { transform: translateX(-2px); }
+  }
+  
+  .animate-glitch-v {
+    animation: glitch-vertical 0.3s ease infinite;
+  }
+  
+  @keyframes glitch-vertical {
+    0% { transform: translateY(-2px); }
+    25% { transform: translateY(0); }
+    50% { transform: translateY(2px); }
+    75% { transform: translateY(0); }
+    100% { transform: translateY(-2px); }
+  }
+  
+  /* Scanlines background for elements */
+  .bg-scanlines {
+    background-image: repeating-linear-gradient(
+      0deg,
+      rgba(0, 255, 0, 0.05),
+      rgba(0, 255, 0, 0.05) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+  }
+  
+  /* Arcade Text Flicker */
+  .arcade-text-flicker {
+    animation: arcade-text-flicker 2s linear infinite;
+  }
+  
+  @keyframes arcade-text-flicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+      opacity: 1;
+    }
+    20%, 24%, 55% {
+      opacity: 0.5;
+    }
+  }
+  
+  /* VHS Tracking Lines Effect */
+  .vhs-tracking {
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .vhs-tracking::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background-color: rgba(255, 255, 255, 0.1);
+    animation: vhs-tracking 10s linear infinite;
+    pointer-events: none;
+    z-index: 100;
+  }
+  
+  @keyframes vhs-tracking {
+    0% { top: -5px; }
+    10% { top: 25%; }
+    20% { top: 50%; }
+    30% { top: 75%; }
+    40% { top: 100%; }
+    100% { top: -5px; }
+  }
+  
+  /* 8-bit Pixel Border Animation */
+  .pixel-border-animated {
+    position: relative;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    z-index: 0;
+  }
+  
+  .pixel-border-animated::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    z-index: -1;
+    background: linear-gradient(90deg, 
+      #00ff00 0%, #00ff00 25%, 
+      #ff55dd 25%, #ff55dd 50%, 
+      #00ffff 50%, #00ffff 75%, 
+      #ffcc00 75%, #ffcc00 100%
+    );
+    background-size: 300% 100%;
+    animation: pixel-border-slide 4s linear infinite;
+  }
+  
+  @keyframes pixel-border-slide {
+    0% { background-position: 0% 0; }
+    100% { background-position: 300% 0; }
+  }
+  
+  /* Animation delay utility */
+  .animation-delay-500 {
+    animation-delay: 0.5s;
+  }
+  
+  /* Retro neon glow effect */
+  .neon-glow {
+    text-shadow: 
+      0 0 5px #00ff00,
+      0 0 10px #00ff00,
+      0 0 20px #00ff00;
+  }
+  
+  .neon-glow-magenta {
+    text-shadow: 
+      0 0 5px #ff55dd,
+      0 0 10px #ff55dd,
+      0 0 20px #ff55dd;
+  }
+  
+  .neon-glow-cyan {
+    text-shadow: 
+      0 0 5px #00ffff,
+      0 0 10px #00ffff,
+      0 0 20px #00ffff;
+  }
+  
+  /* Easter egg element - only appears on interaction */
+  .easter-egg {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .konami-code-active .easter-egg {
+    opacity: 1;
+  }
+  
+  /* Used to hide elements until Konami code is active */
+  .hidden {
+    display: none;
+  }
+  
+  .konami-code-active:not(.hidden) {
+    display: block;
+  }
+
+  /* Custom colors */
+  .text-arcade-green {
+    color: #00ff00;
+  }
+
+  .bg-arcade-green {
+    background-color: #00ff00;
+  }
+
+  .border-arcade-green {
+    border-color: #00ff00;
+  }
+
+  .text-retro-magenta {
+    color: #ff55dd;
+  }
+
+  .bg-retro-magenta {
+    background-color: #ff55dd;
+  }
+
+  .border-retro-magenta {
+    border-color: #ff55dd;
+  }
+
+  .text-crt-cyan {
+    color: #00ffff;
+  }
+
+  .bg-crt-cyan {
+    background-color: #00ffff;
+  }
+
+  .border-crt-cyan {
+    border-color: #00ffff;
+  }
+
+  .text-dark-screen {
+    color: #000000;
+  }
+
+  .bg-dark-screen {
+    background-color: #000000;
+  }
+
+  .text-light-gray {
+    color: #f5f5f5;
+  }
+
+  .text-coin-yellow {
+    color: #ffcc00;
+  }
+
+  .bg-coin-yellow {
+    background-color: #ffcc00;
+  }
+
+  .border-coin-yellow {
+    border-color: #ffcc00;
+  }
+}
+
+/* Markdown Styling */
+.prose code {
+  @apply bg-dark-screen border border-arcade-green rounded px-1;
+}
+
+.prose pre {
+  @apply bg-black p-4 rounded my-4 font-mono text-arcade-green overflow-auto;
+}
+
+.prose h1, .prose h2, .prose h3, .prose h4 {
+  @apply font-press-start text-retro-magenta;
+}
+
+.prose h1 {
+  @apply text-2xl mt-8 mb-4;
+}
+
+.prose h2 {
+  @apply text-xl mt-8 mb-4;
+}
+
+.prose p {
+  @apply my-4;
+}
+
+.prose ul {
+  @apply list-disc pl-6 space-y-2;
+}
+
+.prose a {
+  @apply text-crt-cyan hover:underline;
+}
+
+/* Custom fonts */
+.font-press-start {
+  font-family: 'Press Start 2P', cursive;
+}
+
+.font-vt323 {
+  font-family: 'VT323', monospace;
+}
+
+.font-courier {
+  font-family: 'Courier New', monospace;
+}
